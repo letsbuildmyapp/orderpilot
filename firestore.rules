@@ -1,0 +1,47 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(uid) { return isSignedIn() && request.auth.uid == uid; }
+    function isAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/accounts/$(request.auth.uid))
+        && get(/databases/$(database)/documents/accounts/$(request.auth.uid)).data.isAdmin == true;
+    }
+
+    // Account profiles: users can read/write their own; admins can read all.
+    // The `isAdmin` field can ONLY be changed by another admin.
+    match /accounts/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow create: if isOwner(uid)
+                    && request.resource.data.isAdmin == false;
+      allow update: if (isOwner(uid)
+                       && request.resource.data.isAdmin == resource.data.isAdmin)
+                    || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Quotes: owner can read/write own; readable by anyone with shareToken
+    // (token-based sharing is enforced client-side by query — rules allow read
+    // of any single doc when not signed in to support share links).
+    match /quotes/{id} {
+      allow read: if isSignedIn() && (resource.data.ownerUid == request.auth.uid || isAdmin());
+      // Public share link reads (single doc fetch) are allowed; share token
+      // check happens at the application layer via collection query.
+      allow get: if true;
+      allow list: if isSignedIn() && (request.auth.uid != null);
+      allow create: if isSignedIn() && request.resource.data.ownerUid == request.auth.uid;
+      allow update: if isSignedIn() && (resource.data.ownerUid == request.auth.uid || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    // Orders: owner read; admin read all; create from app
+    match /orders/{id} {
+      allow read: if isSignedIn() && (resource.data.ownerUid == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && request.resource.data.ownerUid == request.auth.uid;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+  }
+}

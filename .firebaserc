@@ -1,0 +1,13 @@
+{
+  "projects": {
+    "default": "orderpilot-demo"
+  },
+  "targets": {
+    "orderpilot-demo": {
+      "hosting": {
+        "staging": ["orderpilot-staging"],
+        "prod": ["orderpilot"]
+      }
+    }
+  }
+}

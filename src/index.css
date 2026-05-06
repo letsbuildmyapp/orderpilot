@@ -1,0 +1,61 @@
+/* Drop weight 300 from Inter (HIG: weight floor for body is 400). Keep 300 on Fraunces only for display. */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root { color-scheme: light; }
+  html, body, #root { height: 100%; }
+  /* Editorial body: 17px / 1.6 — within HIG floor (16px) and at the editorial sweet spot. */
+  html { font-size: 17px; }
+  body {
+    @apply bg-cream-50 text-ink font-sans antialiased;
+    font-feature-settings: "ss01", "ss02";
+    line-height: 1.6;
+  }
+  h1, h2, h3, h4 { @apply font-serif text-ink; line-height: 1.15; }
+  /* Tabular numerals everywhere numbers stack: prices, quantities, totals. */
+  .tnum, [data-tnum] { font-variant-numeric: tabular-nums; }
+  *:focus-visible {
+    @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-cream-50;
+  }
+  ::selection { @apply bg-accent text-cream-50; }
+}
+
+@layer components {
+  .container-edit { @apply mx-auto w-full max-w-[1400px] px-6 md:px-10; }
+  /* Display headlines: editorial archetype keeps Fraunces light (300) — but only at >32px where it stays legible.
+     tracking-tightest (-0.04em) is acceptable here per HIG ("tighten only at display sizes >24px"). */
+  .display-xl {
+    @apply font-serif font-light tracking-tightest leading-[0.95];
+    font-size: clamp(3rem, 9vw, 8rem);
+  }
+  .display-lg {
+    @apply font-serif font-light tracking-tightest leading-[1];
+    font-size: clamp(2.25rem, 5.5vw, 4.5rem);
+  }
+  .display-md {
+    @apply font-serif font-light tracking-tightest leading-[1.05];
+    font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+  }
+  /* Eyebrow: 12px uppercase, 0.2em tracking (well above 0.05em floor for all-caps <13px). Medium weight, ink-mute now meets contrast. */
+  .eyebrow { @apply uppercase tracking-[0.2em] text-xs font-medium text-ink-mute; }
+  .rule { @apply border-t border-line; }
+  /* Buttons: 44x44 minimum touch target (HIG). px-5 py-3 with text-sm = 14px line-height ~20px + 24px padding => 44px. */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px];
+  }
+  .btn-primary { @apply btn bg-ink text-cream-50 hover:bg-accent; }
+  .btn-outline { @apply btn border border-ink text-ink hover:bg-ink hover:text-cream-50; }
+  .btn-ghost { @apply btn text-ink hover:bg-cream-100; }
+  .input {
+    @apply w-full bg-transparent border-b border-line px-0 py-2 text-ink placeholder:text-ink-mute focus:border-accent focus:outline-none;
+  }
+  .card { @apply bg-cream-50 border border-line p-6; }
+  /* Editorial paragraph blocks: cap line length at 65ch for readability. */
+  .prose-edit { @apply max-w-[65ch]; }
+  /* Money / number display utility — combine with text-* sizes. */
+  .num { font-variant-numeric: tabular-nums; }
+}
