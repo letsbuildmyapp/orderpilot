@@ -88,20 +88,8 @@ export default function SignIn() {
 
   return (
     <div className="relative flex min-h-screen flex-col">
-      <header className="relative z-10 flex items-center justify-between px-6 py-5 sm:px-10">
-        <Link to="/" className="flex items-center gap-2 font-semibold">
-          <div className="h-7 w-7 rounded-md bg-accent grid place-items-center text-cream-50 font-serif italic text-sm">O</div>
-          <span className="tracking-tight">OrderPilot</span>
-        </Link>
-        <span className="text-xs text-ink-mute">
-          Need help?{" "}
-          <a href="mailto:hello@letsbuildmyapp.com?subject=OrderPilot%20support" className="text-ink underline-offset-4 hover:underline">
-            Contact support
-          </a>
-        </span>
-      </header>
 
-      <main className="relative z-10 flex flex-1 items-center justify-center px-6 py-10">
+      <main className="relative z-10 flex flex-1 items-start justify-center px-6 pt-8 sm:pt-12 pb-10">
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
